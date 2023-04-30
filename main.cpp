@@ -10,7 +10,8 @@
 
 using namespace std;
 
-map<string, double> pitchMap{{"a4", 440}, {"b4", 493.88}, {"c5", 523.25}, {"d5", 587.33}, {"e5", 659.25}};
+map<string, double> pitchMap{{"c4", 261.63}, {"d4", 293.66}, {"e4", 329.63}, {"f4", 349.23}, {"g4", 392.00},
+							 {"a4", 440.00}, {"b4", 493.88}, {"c5", 523.25}, {"d5", 587.33}, {"e5", 659.25}};
 
 double noteValue(const string& note, int timeD);
 double calculatePeriod(double freq);
@@ -83,4 +84,4 @@ double noteValue(const string& note, int timeD) {
 	}
 }
 
-double calculatePeriod(double freq) { return (P_FREQ / freq) / 1024; }
+double calculatePeriod(double freq) { return (P_FREQ / freq) / 256; }

@@ -1,6 +1,9 @@
 60 4 4
+c4 q f
+d4 q f
+e4 q f
+f4 q f
+g4 q f
 a4 q f
 b4 q f
 c5 q f
-d5 q f
-e5 q f
