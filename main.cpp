@@ -38,22 +38,59 @@ int main(int argc, char** argv) {
 			<< "#include \"Note.h\"\n\n"
 			<< "const struct Note " << name << "Notes[] = {\n";
 
-		int length = 0;
-		double prevDuration = 0, prevFreq = -1;
+		int length = 0, bar = 1;
+		bool wasSlurred = false;
+		double prevDuration = 0, prevFreq = 0, barValue = 0;
 		string pitch, note, slurred;
 		while (in >> pitch >> note >> slurred) {
 			double freq = pitchMap[pitch], value = noteValue(note, timeD, slurred == "t"), duration = bpm / 60 * value;
 
-			if (slurred == "t" && (prevFreq == -1 || freq == prevFreq)) {
+			if (barValue == 0) {
+				out << "// Meas. " << bar << "\n";
+			}
+
+			if (slurred == "t" && (!wasSlurred || freq == prevFreq)) {	// tied  or beginning of slur
 				prevDuration += duration;
 				prevFreq = freq;
-			} else {
-				double period = calculatePeriod(freq), iterations = (prevDuration + duration) * freq;
+				wasSlurred = true;
+			} else if (slurred == "t") {  // just slurred
+				double period = calculatePeriod(prevFreq), iterations = prevDuration * prevFreq;
 
 				out << "\t{ " << (int)period << ", " << (int)iterations << " },\n";
-				prevDuration = 0;
-				prevFreq = -1;
+				prevDuration = duration;
+				prevFreq = freq;
 				length++;
+				// probably unnecessary but ill put here anyway
+				wasSlurred = true;
+			} else {			   // "normal" note
+				if (wasSlurred) {  // end of slur
+					double period = calculatePeriod(prevFreq), iterations = prevDuration * prevFreq;
+
+					out << "\t{ " << (int)period << ", " << (int)iterations << " },\n";
+
+					period = calculatePeriod(freq), iterations = duration * freq;
+
+					out << "\t{ " << (int)period << ", " << (int)iterations << " },\n";
+
+					prevDuration = 0;
+					prevFreq = freq;
+					length += 2;
+				} else {
+					double period = calculatePeriod(freq), iterations = (prevDuration + duration) * freq;
+
+					out << "\t{ " << (int)period << ", " << (int)iterations << " },\n";
+					prevDuration = 0;
+					prevFreq = freq;
+					length++;
+				}
+
+				wasSlurred = false;
+			}
+
+			barValue += value;
+			if (barValue >= timeN) {
+				barValue = 0;
+				bar++;
 			}
 		}
 
