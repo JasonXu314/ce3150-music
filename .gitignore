@@ -1,4 +1,5 @@
 bin/
 *.h
 !Note.h
+!utils.h
 .vscode/

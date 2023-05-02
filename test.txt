@@ -1,0 +1,12 @@
+80
+4 4
+a4 dq f
+a4 e t
+b4 e t
+c5 e t
+e4 q f
+e4 dq f
+e4 e t
+f4 e t
+e4 e f
+e4 q f

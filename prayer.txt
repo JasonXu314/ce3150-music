@@ -1,9 +1,10 @@
 80
 4 4
+# comment
 a4 dq f
 a4 e t
 b4 e t
-c4 e t
+c5 e t
 e4 q f
 e4 dq f
 e4 e t
@@ -23,7 +24,7 @@ f4 q f
 a4 dq f
 a4 e t
 b4 e t
-c4 e t
+c5 e t
 e4 q f
 e4 dq f
 e4 e t
@@ -46,17 +47,6 @@ g4 e t
 f4 e t
 f4 e t
 e4 e t
-d4 dq f
-d4 e t
-f4 e t
-e4 e t
-d4 e t
-f4 e f
-f4 dq f
-f4 e t
-g4 e t
-f4 e f
-f4 e q
 e4 dq f
 e4 e t
 g4 e t
@@ -73,11 +63,34 @@ f4 dq f
 f4 e t
 g4 e t
 f4 e f
-f4 e q
+f4 q f
+e4 dq f
+e4 e t
+g4 e t
+f4 e t
+f4 e t
+e4 e t
+e4 dq f
+e4 e t
+g4 e t
+f4 e t
+f4 e t
+e4 e t
+d4 dq f
+d4 e t
+f4 e t
+e4 e t
+d4 e t
+f4 e f
+f4 dq f
+f4 e t
+g4 e t
+f4 e f
+f4 q f
 a4 dq f
 a4 e f
 b4 e f
-c4 e f
+c5 e f
 e4 q f
 e4 dq f
 e4 e f
