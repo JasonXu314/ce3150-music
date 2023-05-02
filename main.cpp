@@ -19,7 +19,10 @@ int main(int argc, char** argv) {
 		stringstream out;
 		out << "#ifndef " << name << "_h\n"
 			<< "#define " << name << "_h\n\n"
+			<< "#include <avr/io.h>\n"
+			<< "#include <avr/interrupt.h>\n\n"
 			<< "#include \"Note.h\"\n\n"
+			<< "void delay(int duration, int prescaler);\n\n"
 			<< "const struct Note " << name << "Notes[] = {\n";
 
 		int length = 0, bar = 1;
@@ -47,6 +50,16 @@ int main(int argc, char** argv) {
 
 		out << "};\n\n"
 			<< "int " << name << "Length = " << length << ";\n\n"
+			<< "void playMusic() {\n"
+			<< "\tfor (int i = 0; i < " << length << "; i++) {\n"
+			<< "\t\tfor (int j = 0; j < " << name << "Notes[i].iterations; j++) {\n"
+			<< "\t\t\tif (!" << name << "Notes[i].rest) PORTE ^= 0x10;\n"
+			<< "\t\t\tdelay(" << name << "Notes[i].period / 2, " << name << "Notes[i].prescaler);\n"
+			<< "\t\t\tif (!" << name << "Notes[i].rest) PORTE ^= 0x10;\n"
+			<< "\t\t\tdelay(" << name << "Notes[i].period / 2, " << name << "Notes[i].prescaler);\n"
+			<< "\t\t}\n"
+			<< "\t}\n"
+			<< "}\n\n"
 			<< "#endif" << endl;
 
 		ofstream of(name + ".h");
