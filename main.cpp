@@ -21,7 +21,12 @@ int main(int argc, char** argv) {
 			<< "#define " << name << "_h\n\n"
 			<< "#include <avr/io.h>\n"
 			<< "#include <avr/interrupt.h>\n\n"
-			<< "#include \"Note.h\"\n\n"
+			<< "#include \"Note.h\"\n"
+			<< "#include \"state.h\"\n\n"
+			<< "#define CHECK_CANCEL if (~PINA & 0x04) { \\\n"
+			<< "\tstate = MENU; \\\n"
+			<< "\treturn 1; \\\n"
+			<< "}\n\n"
 			<< "void delay(int duration, int prescaler);\n\n"
 			<< "const struct Note " << name << "Notes[] = {\n";
 
@@ -50,15 +55,21 @@ int main(int argc, char** argv) {
 
 		out << "};\n\n"
 			<< "int " << name << "Length = " << length << ";\n\n"
-			<< "void playMusic() {\n"
+			<< "int playMusic() {\n"
 			<< "\tfor (int i = 0; i < " << length << "; i++) {\n"
 			<< "\t\tfor (int j = 0; j < " << name << "Notes[i].iterations; j++) {\n"
+			<< "\t\t\tCHECK_CANCEL\n"
 			<< "\t\t\tif (!" << name << "Notes[i].rest) PORTE ^= 0x10;\n"
+			<< "\t\t\tCHECK_CANCEL\n"
 			<< "\t\t\tdelay(" << name << "Notes[i].period / 2, " << name << "Notes[i].prescaler);\n"
+			<< "\t\t\tCHECK_CANCEL\n"
 			<< "\t\t\tif (!" << name << "Notes[i].rest) PORTE ^= 0x10;\n"
+			<< "\t\t\tCHECK_CANCEL\n"
 			<< "\t\t\tdelay(" << name << "Notes[i].period / 2, " << name << "Notes[i].prescaler);\n"
+			<< "\t\t\tCHECK_CANCEL\n"
 			<< "\t\t}\n"
 			<< "\t}\n"
+			<< "\treturn 0;\n"
 			<< "}\n\n"
 			<< "#endif" << endl;
 

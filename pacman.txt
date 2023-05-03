@@ -1,0 +1,37 @@
+110
+4 4
+# bar 1
+b4 s t
+b5 s t
+f#5 s t
+eb5 s f
+b5 t t
+f#5 ds t
+eb5 e f
+# second run
+c5 s t
+c6 s t
+g5 s t
+e5 s f
+c6 t t
+g5 ds t
+e5 e f
+# bar 2
+b4 s t
+b5 s t
+f#5 s t
+eb5 s f
+b5 t t
+f#5 ds t
+eb5 e f
+# chromatic run
+eb5 t t
+e5 t t
+f5 s f
+f5 t t
+f#5 t t
+g5 s f
+g5 t t
+ab5 t t
+a5 s t
+b5 e f
