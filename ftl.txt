@@ -400,7 +400,7 @@ e5 s t
 b5 s t
 g5 s t
 e6 s t
-b5 s t
+b5 s f
 b5 s t
 e6 s t
 g5 s t
@@ -415,7 +415,7 @@ g5 s t
 d5 s t
 b4 s t
 f#5 s t
-d5 s t
+d5 s f
 d5 s t
 f#5 s f
 f#5 s t

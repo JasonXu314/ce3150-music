@@ -4,8 +4,6 @@
 struct Note {
 	int period;
 	int prescaler;
-	int iterations;
-	int rest;
 };
 
 #endif

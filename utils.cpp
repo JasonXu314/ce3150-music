@@ -16,6 +16,8 @@ map<string, double> pitchMap{{"r", 440.00},	   {"e2", 82.41},	 {"f2", 87.31},	  
 							 {"a#6", 1864.66}, {"bb6", 1864.66}, {"b6", 1975.53},  {"c7", 2093.00}, {"c#7", 2217.46}, {"db7", 2217.46}, {"d7", 2349.32},
 							 {"d#7", 2489.02}, {"eb7", 2489.02}, {"e7", 2637.02},  {"f7", 2793.83}, {"f#7", 2959.96}, {"gb7", 2959.96}, {"g7", 3135.96}};
 
+bool operator==(const Note& a, const Note& b) { return (a.pitch + " " + to_string(a.value)) == (b.pitch + " " + to_string(b.value)); }
+
 Piece parsePiece(const string& file) {
 	ifstream in(file);
 	string line;
@@ -94,7 +96,7 @@ double noteValue(const string& note, int timeD, bool slurred) {
 		throw runtime_error("Unexpected note " + note);
 	}
 
-	return slurred ? out : max(out * 0.8, out - (double)timeD / 16);
+	return slurred ? out : max(out * 0.95, out - (double)timeD / 16);
 }
 
 PeriodData calculatePeriod(double freq) {
@@ -115,4 +117,21 @@ PeriodData calculatePeriod(double freq) {
 	} else {
 		throw runtime_error("No prescaler works for frequency");
 	}
+}
+
+unordered_map<Note, int> generateNoteMap(const Piece& piece, stringstream& out) {
+	unordered_map<Note, int> noteMap;
+	int idx = 0;
+
+	for (auto& note : piece.notes) {
+		if (!noteMap.count(note)) {
+			noteMap.emplace(note, idx++);
+
+			double freq = pitchMap[note.pitch];
+			PeriodData period = calculatePeriod(freq);
+			out << "\t{ " << (int)period.period << ", " << period.prescaler << " }, // " << note.original << " " << note.pitch << "\n";
+		}
+	}
+
+	return noteMap;
 }

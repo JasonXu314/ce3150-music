@@ -16,34 +16,31 @@ int main(int argc, char** argv) {
 			name = argv[2];
 		}
 
+		Piece piece = parsePiece(file);
+
 		stringstream out;
 		out << "#ifndef " << name << "_h\n"
 			<< "#define " << name << "_h\n\n"
 			<< "#include <avr/io.h>\n"
 			<< "#include <avr/interrupt.h>\n\n"
 			<< "#include \"Note.h\"\n"
-			<< "#include \"state.h\"\n\n"
-			<< "#define CHECK_CANCEL if (~PINA & 0x04) { \\\n"
-			<< "\tstate = MENU; \\\n"
-			<< "\treturn 1; \\\n"
-			<< "}\n\n"
 			<< "void delay(int duration, int prescaler);\n\n"
 			<< "const struct Note " << name << "Notes[] = {\n";
+		unordered_map<Note, int> noteMap = generateNoteMap(piece, out);
+
+		stringstream fnBody;
 
 		int length = 0, bar = 1;
 		double barValue = 0;
 
-		Piece piece = parsePiece(file);
 		for (const Note& note : piece.notes) {
 			double freq = pitchMap[note.pitch], duration = 60 / piece.bpm * note.value, iterations = duration * freq;
-			PeriodData period = calculatePeriod(freq);
 
 			if (barValue == 0) {
-				out << "// Meas. " << bar << endl;
+				fnBody << "// Meas. " << bar << endl;
 			}
 
-			out << "\t{ " << (int)period.period << ", " << period.prescaler << ", " << (int)iterations << ", " << (int)(note.pitch == "r") << " }, // "
-				<< note.original << " " << note.pitch << "\n";
+			fnBody << "\t\tplay(" << noteMap[note] << ", " << (int)iterations << ", " << (int)(note.pitch == "r") << ");\n";
 			length++;
 			barValue += note.value;
 
@@ -54,22 +51,18 @@ int main(int argc, char** argv) {
 		}
 
 		out << "};\n\n"
-			<< "int " << name << "Length = " << length << ";\n\n"
-			<< "int playMusic() {\n"
-			<< "\tfor (int i = 0; i < " << length << "; i++) {\n"
-			<< "\t\tfor (int j = 0; j < " << name << "Notes[i].iterations; j++) {\n"
-			<< "\t\t\tCHECK_CANCEL\n"
-			<< "\t\t\tif (!" << name << "Notes[i].rest) PORTE ^= 0x10;\n"
-			<< "\t\t\tCHECK_CANCEL\n"
-			<< "\t\t\tdelay(" << name << "Notes[i].period / 2, " << name << "Notes[i].prescaler);\n"
-			<< "\t\t\tCHECK_CANCEL\n"
-			<< "\t\t\tif (!" << name << "Notes[i].rest) PORTE ^= 0x10;\n"
-			<< "\t\t\tCHECK_CANCEL\n"
-			<< "\t\t\tdelay(" << name << "Notes[i].period / 2, " << name << "Notes[i].prescaler);\n"
-			<< "\t\t\tCHECK_CANCEL\n"
-			<< "\t\t}\n"
+			<< "void play(int note, int iterations, int rest) {\n"
+			<< "\tfor (int i = 0; i < iterations; i++) {\n"
+			<< "\t\tif (!rest) PORTE ^= 0x10;\n"
+			<< "\t\tdelay(" << name << "Notes[note].period / 2, " << name << "Notes[note].prescaler);\n"
+			<< "\t\tif (!rest) PORTE ^= 0x10;\n"
+			<< "\t\tdelay(" << name << "Notes[note].period / 2, " << name << "Notes[note].prescaler);\n"
 			<< "\t}\n"
-			<< "\treturn 0;\n"
+			<< "}\n\n"
+			<< "void playMusic() {\n"
+			// << "\tfor (int i = 0; i < " << length << "; i++) {\n"
+			<< fnBody.str()
+			// << "\t}\n"
 			<< "}\n\n"
 			<< "#endif" << endl;
 
